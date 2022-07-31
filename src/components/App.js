@@ -14,23 +14,37 @@ function App() {
       .then((items) => setSushis(items))
   }, [])
 
-  const [firstObj, setfirstObj] = useState(0)
-  const [lastObj, setlastObj] = useState(4)
+  const [index, setIndex] = useState(0)
 
   function handlePage() {
-    setfirstObj(firstObj + 5)
-    setlastObj(lastObj + 5)
+    setIndex((sushiIndex) => (sushiIndex + 4) % sushis.length)
+    // to wrap back around to the beginning of the array once we get to the end
+    // using the remainder (%) operator
   }
 
-  const displayedSushis = sushis.slice(firstObj, lastObj)
-  
+  const displayedSushis = sushis.slice(index, index + 4)
+
+  const [eaten, setEaten] = useState([])
+  const [price, setPrice] = useState(50)
+
+  function handleEat(eatenSushi, sushiPrice) {
+    if (price > sushiPrice) {
+      setEaten([...eaten, eatenSushi])
+      setPrice(price - sushiPrice)
+    } else {return alert("Need more money")}
+  }
+
   return (
     <div className="app">
       <SushiContainer
         sushis={displayedSushis}
         handlePage={handlePage}
+        handleEat={handleEat}
       />
-      <Table />
+      <Table
+        plates={eaten}
+        remainMoney={price}
+      />
     </div>
   );
 }
